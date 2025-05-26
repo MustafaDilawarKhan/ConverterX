@@ -1,116 +1,226 @@
 # Universal File Converter
 
-A comprehensive Python application for converting between various document and file formats including DOCX, PDF, TXT, HTML, RTF, images, and more.
+A comprehensive, modern file conversion tool with an intuitive GUI interface. Convert between documents, images, videos, audio files, and spreadsheets with professional-grade batch processing capabilities.
 
-## Features
+## 🚀 Features
 
-- **Multiple Format Support**: Convert between DOCX, PDF, TXT, HTML, RTF, Markdown, Excel, CSV, and image formats
-- **Bidirectional Conversion**: Convert DOCX ↔ PDF and many other format combinations
-- **Enhanced GUI Interface**: User-friendly graphical interface with organized sidebar navigation
-- **Drag & Drop Support**: Simply drop files into the application for instant conversion
-- **Smart Sidebar**: Categorized format selection (Documents, Images, Spreadsheets)
-- **Quick Conversions**: One-click buttons for popular conversion tasks
-- **Modern Visual Design**: Professional styling with hover effects and visual feedback
-- **Command Line Interface**: Powerful CLI for batch processing and automation
-- **Batch Processing**: Convert multiple files at once
+### 📁 **Comprehensive Format Support (35+ Formats)**
+- **📄 Documents**: DOCX, PDF, TXT, HTML, RTF, Markdown
+- **🖼️ Images**: PNG, JPG, GIF, BMP, TIFF, WebP, ICO, SVG
+- **🎬 Video**: MP4, AVI, MOV, WMV, FLV, MKV, WebM, M4V, 3GP
+- **🎵 Audio**: MP3, WAV, AAC, FLAC, OGG, M4A, WMA
+- **📊 Spreadsheets**: XLSX, CSV
+
+### 🎨 **Modern User Interface**
+- **Drag & Drop**: Batch file selection with visual feedback
+- **Categorized Sidebar**: Organized format buttons by type
+- **File List Management**: Add, remove, and clear files easily
+- **Progress Tracking**: Real-time conversion status for each file
+- **Professional Styling**: Clean, modern design with hover effects
+
+### ⚡ **Advanced Processing**
+- **Batch Conversion**: Process multiple files simultaneously
+- **Smart Error Handling**: Continue processing even if some files fail
+- **Quick Conversions**: One-click popular format combinations
 - **Cross-Platform**: Works on Windows, macOS, and Linux
-- **Error Handling**: Comprehensive error handling and logging
-- **File Validation**: Automatic file format detection and validation
-- **Quality Optimization**: Smart handling of transparency, compression, and format-specific features
+- **Dual Engine**: MoviePy + FFmpeg fallback for video/audio
 
-## Supported Formats
+### 🎯 **Popular Use Cases**
+- **Video → MP3**: Extract audio tracks from videos
+- **Video → GIF**: Create animated previews
+- **DOCX → PDF**: Professional document conversion
+- **Images → PDF**: Combine multiple images
+- **Audio Format Conversion**: High-quality codec support
 
-### Document Formats
-- **DOCX** → PDF, TXT, HTML, RTF
-- **PDF** → TXT, DOCX, HTML
-- **TXT** → DOCX, PDF, HTML, RTF
-- **HTML** → DOCX, PDF, TXT
-- **RTF** → DOCX, PDF, TXT
-- **Markdown** → HTML, PDF, DOCX
+## 🔄 Supported Conversions
 
-### Spreadsheet Formats
-- **XLSX** → CSV, PDF
-- **CSV** → XLSX, PDF
-
-### Image Formats
-- **PNG** ↔ JPG, GIF, BMP, TIFF, WebP, ICO, PDF
-- **JPG/JPEG** ↔ PNG, GIF, BMP, TIFF, WebP, PDF
-- **GIF** ↔ PNG, JPG, BMP, TIFF, WebP, PDF
-- **BMP** ↔ PNG, JPG, GIF, TIFF, WebP, PDF
-- **TIFF** ↔ PNG, JPG, GIF, BMP, WebP, PDF
-- **WebP** ↔ PNG, JPG, GIF, BMP, TIFF, PDF
-- **ICO** ↔ PNG, JPG, GIF, BMP, PDF
-- **SVG** → PNG, JPG, PDF (vector to raster conversion)
-
-## Installation
-
-### Quick Install (All Platforms)
-```bash
-python install.py
+### **📄 Document Conversions**
+```
+DOCX ↔ PDF ↔ TXT ↔ HTML ↔ RTF ↔ MD
 ```
 
-### Manual Installation
+### **🖼️ Image Conversions**
+```
+PNG ↔ JPG ↔ GIF ↔ BMP ↔ TIFF ↔ WebP ↔ ICO ↔ SVG
+```
 
-1. **Clone or download the repository**
-2. **Install Python dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### **🎬 Video Conversions**
+```
+MP4 ↔ AVI ↔ MOV ↔ WMV ↔ FLV ↔ MKV ↔ WebM ↔ M4V ↔ 3GP
+Video → MP3/WAV/AAC (audio extraction)
+Video → GIF (animated conversion)
+```
 
-### System Requirements
+### **🎵 Audio Conversions**
+```
+MP3 ↔ WAV ↔ AAC ↔ FLAC ↔ OGG ↔ M4A ↔ WMA
+```
 
-- Python 3.7 or higher
-- **Windows**: Microsoft Word (for optimal DOCX to PDF conversion)
-- **Linux**: See [LINUX_INSTALL.md](LINUX_INSTALL.md) for detailed Linux installation
-- **macOS**: Additional system dependencies may be required
+### **📊 Spreadsheet Conversions**
+```
+XLSX ↔ CSV
+```
 
-### Platform-Specific Setup
+## 📦 Installation
 
-#### Windows
-- Install Python dependencies: `pip install -r requirements.txt`
-- Microsoft Word recommended for best DOCX→PDF conversion
+### 🖥️ **Windows**
 
-#### Linux (Fedora/Ubuntu/etc.)
-- See detailed guide: [LINUX_INSTALL.md](LINUX_INSTALL.md)
-- Install tkinter: `sudo dnf install python3-tkinter` (Fedora)
-- Install LibreOffice: `sudo dnf install libreoffice` (recommended)
-
-#### macOS
-- Install Python dependencies: `pip install -r requirements.txt`
-- Tkinter should be included with Python
-
-## Usage
-
-### GUI Application
-
-Run the graphical interface:
+#### **Quick Install (Recommended)**
 ```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd universal-file-converter
+
+# 2. Install Python dependencies
+pip install -r requirements.txt
+
+# 3. Install FFmpeg (for video/audio conversion)
+# Download from: https://ffmpeg.org/download.html#build-windows
+# Add to PATH or place ffmpeg.exe in the project folder
+
+# 4. Run the application
 python file_converter_gui.py
 ```
 
-**Enhanced GUI Features:**
-- **Smart Sidebar Navigation**: Organized by file categories (Documents, Images, Spreadsheets)
-- **Drag & Drop Support**: Drop files directly into the main window for instant conversion
-- **Quick Conversion Buttons**: One-click access to popular conversions
-- **Format Selection**: Click sidebar buttons to instantly set target format
-- **Modern Visual Design**: Professional styling with hover effects and visual feedback
-- **Browse and select input files** with enhanced file type filtering
-- **Automatic format detection** and validation
-- **Real-time conversion progress** with detailed logging
-- **Conversion tips and guidance** built into the interface
-- **Responsive design** that adapts to different window sizes
+#### **Optional: Enhanced PDF Support**
+```bash
+# Download and install wkhtmltopdf for advanced PDF features
+# From: https://wkhtmltopdf.org/downloads.html
+```
 
-**Sidebar Categories:**
-- 📄 **Documents**: DOCX, PDF, TXT, HTML, RTF, Markdown
-- 🖼️ **Images**: PNG, JPEG, GIF, BMP, TIFF, WebP, ICO, SVG
-- 📊 **Spreadsheets**: XLSX, CSV
+### 🍎 **macOS**
 
-**Quick Conversions:**
-- DOCX → PDF (most popular)
-- PDF → TXT (text extraction)
-- PNG → JPG (with transparency handling)
-- JPG → PNG (add transparency support)
-- Images → PDF (any image to PDF)
+```bash
+# 1. Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install system dependencies
+brew install python3 ffmpeg wkhtmltopdf
+
+# 3. Clone the repository
+git clone <repository-url>
+cd universal-file-converter
+
+# 4. Install Python dependencies
+pip3 install -r requirements.txt
+
+# 5. Run the application
+python3 file_converter_gui.py
+```
+
+### 🐧 **Linux (Ubuntu/Debian/Fedora)**
+
+#### **Ubuntu/Debian**
+```bash
+# 1. Update package list
+sudo apt update
+
+# 2. Install system dependencies
+sudo apt install -y python3 python3-pip ffmpeg wkhtmltopdf
+
+# 3. Install additional libraries for GUI and media processing
+sudo apt install -y python3-tk python3-dev build-essential
+
+# 4. Clone the repository
+git clone <repository-url>
+cd universal-file-converter
+
+# 5. Install Python dependencies
+pip3 install -r requirements.txt
+
+# 6. Run the application
+python3 file_converter_gui.py
+```
+
+#### **Fedora/RHEL/CentOS**
+```bash
+# 1. Install system dependencies
+sudo dnf install -y python3 python3-pip ffmpeg wkhtmltopdf
+
+# 2. Install development tools
+sudo dnf groupinstall -y "Development Tools"
+sudo dnf install -y python3-tkinter python3-devel
+
+# 3. Clone the repository
+git clone <repository-url>
+cd universal-file-converter
+
+# 4. Install Python dependencies
+pip3 install -r requirements.txt
+
+# 5. Run the application
+python3 file_converter_gui.py
+```
+
+#### **Arch Linux**
+```bash
+# 1. Install system dependencies
+sudo pacman -S python python-pip ffmpeg wkhtmltopdf tk
+
+# 2. Clone the repository
+git clone <repository-url>
+cd universal-file-converter
+
+# 3. Install Python dependencies
+pip install -r requirements.txt
+
+# 4. Run the application
+python file_converter_gui.py
+```
+
+### 🔧 **Troubleshooting Linux Installation**
+
+#### **If FFmpeg is not available in repositories:**
+```bash
+# Ubuntu/Debian - Enable universe repository
+sudo add-apt-repository universe
+sudo apt update
+sudo apt install ffmpeg
+
+# Or install from snap
+sudo snap install ffmpeg
+```
+
+#### **If wkhtmltopdf is not available:**
+```bash
+# Download directly from the official website
+wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
+sudo dpkg -i wkhtmltox_0.12.6.1-2.jammy_amd64.deb
+sudo apt-get install -f  # Fix any dependency issues
+```
+
+#### **Permission Issues:**
+```bash
+# If you get permission errors, try:
+pip3 install --user -r requirements.txt
+
+# Or create a virtual environment:
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## 🎯 Usage
+
+### **Basic Workflow**
+1. **Launch**: `python file_converter_gui.py` (or `python3` on Linux/macOS)
+2. **Add Files**: Drag & drop multiple files or use "Browse Files"
+3. **Select Format**: Choose target format from categorized sidebar
+4. **Convert**: Click "Convert X Files" for batch processing
+5. **Results**: Check log for detailed conversion status
+
+### **Quick Conversions**
+- **Video → MP3**: Extract audio from any video file
+- **Video → GIF**: Create animated GIFs with optimization
+- **DOCX → PDF**: Professional document conversion
+- **PNG → JPG**: Image format optimization
+- **Images → PDF**: Combine multiple images into one PDF
+
+### **Batch Processing**
+1. Drag multiple files of different types
+2. Select target format (applies to compatible files)
+3. Convert all files with one click
+4. Get detailed success/failure report
 
 ### Command Line Interface
 
@@ -278,30 +388,100 @@ Check `converter.log` for detailed error messages and conversion history.
 - `cairosvg`: High-quality SVG to PNG/PDF conversion
 - `Wand`: ImageMagick Python binding for advanced image processing
 
-## Dependencies
+## 📋 Dependencies
 
-- `python-docx`: DOCX file handling
-- `PyPDF2`: PDF operations
-- `reportlab`: PDF generation
-- `pdfplumber`: PDF text extraction
-- `Pillow`: Image processing (PNG, JPG, GIF, BMP, TIFF, WebP, ICO)
-- `pandas`: Excel/CSV handling
-- `beautifulsoup4`: HTML parsing
-- `markdown`: Markdown processing
-- `cairosvg`: SVG conversion (optional)
-- `Wand`: Advanced image processing (optional)
+### **Core Dependencies**
+- `python-docx`: Word document processing
+- `PyPDF2`: PDF file handling
+- `Pillow`: Image processing
+- `pandas`: Data manipulation
+- `openpyxl`: Excel file support
+- `tkinterdnd2`: Drag & drop functionality
 
-## License
+### **Video/Audio Dependencies**
+- `moviepy`: Video/audio processing (optional, FFmpeg fallback available)
+- `ffmpeg-python`: FFmpeg Python bindings (optional)
 
-This project is open source. Feel free to modify and distribute.
+### **System Dependencies**
+- `FFmpeg`: Video/audio conversion engine
+- `wkhtmltopdf`: Advanced PDF generation (optional)
 
-## Contributing
+## 🛠️ Troubleshooting
+
+### **Common Issues & Solutions**
+
+#### **Video/Audio Conversion Fails**
+```bash
+# Check FFmpeg installation
+ffmpeg -version
+
+# If not installed:
+# Ubuntu/Debian: sudo apt install ffmpeg
+# macOS: brew install ffmpeg
+# Windows: Download from https://ffmpeg.org/
+```
+
+#### **Import Errors**
+```bash
+# Reinstall dependencies
+pip install -r requirements.txt --force-reinstall
+
+# Check Python version (3.8+ required)
+python --version
+```
+
+#### **Permission Errors on Linux**
+```bash
+# Use user installation
+pip3 install --user -r requirements.txt
+
+# Or fix permissions
+sudo chown -R $USER:$USER ~/.local/
+```
+
+#### **GUI Doesn't Start on Linux**
+```bash
+# Install tkinter
+sudo apt install python3-tk  # Ubuntu/Debian
+sudo dnf install python3-tkinter  # Fedora
+
+# Check DISPLAY variable for remote sessions
+echo $DISPLAY
+```
+
+#### **Drag & Drop Not Working**
+```bash
+# Install tkinterdnd2
+pip install tkinterdnd2
+
+# On Linux, ensure X11 forwarding if using SSH
+ssh -X username@hostname
+```
+
+### **Performance Tips**
+- **Use SSD storage** for faster file I/O
+- **Close other media applications** during video conversion
+- **Process smaller batches** for better responsiveness
+- **Check available disk space** before large conversions
+
+### **Getting Help**
+1. **Check the conversion log** in the application for detailed error messages
+2. **Verify all dependencies** are installed correctly
+3. **Test with sample files** (use `python create_test_video.py`)
+4. **Check file permissions** and output directory access
+5. **Review system requirements** for your operating system
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
 
-## Version History
+## 🎉 Acknowledgments
 
-- **v1.1.0**: Enhanced GUI with sidebar navigation, quick conversions, and improved user experience
-- **v1.0.0**: Initial release with GUI and CLI interfaces, support for major document and image formats
-
-For detailed changes, see [CHANGELOG.md](CHANGELOG.md)
+- **FFmpeg** - Multimedia processing framework
+- **MoviePy** - Video editing library
+- **Pillow** - Python Imaging Library
+- **tkinter** - GUI framework

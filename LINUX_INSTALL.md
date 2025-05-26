@@ -1,226 +1,153 @@
-# Linux Installation Guide for Universal File Converter
+# Linux Installation Guide - Universal File Converter
 
-This guide provides specific instructions for installing and running the Universal File Converter on Linux systems, with special focus on Fedora.
+Complete installation instructions for Linux distributions including Ubuntu, Debian, Fedora, CentOS, RHEL, Arch Linux, and more.
 
-## System Requirements
-
-- Python 3.7 or higher
-- pip (Python package manager)
-- tkinter (for GUI support)
-- LibreOffice (recommended for best DOCX→PDF conversion)
-
-## Installation Steps
-
-### Quick Installation (Recommended)
+## 🐧 Quick Start (Ubuntu/Debian)
 
 ```bash
-# Make the script executable
-chmod +x install_linux.sh
+# 1. Update system
+sudo apt update && sudo apt upgrade -y
 
-# Run the automated installation script
-./install_linux.sh
-```
+# 2. Install system dependencies
+sudo apt install -y python3 python3-pip python3-tk python3-dev build-essential ffmpeg wkhtmltopdf git
 
-This script will:
-- Detect your Linux distribution
-- Install system dependencies (tkinter, LibreOffice, etc.)
-- Install Python dependencies
-- Optionally create a virtual environment
-- Test the installation
-- Create a desktop entry
+# 3. Clone repository
+git clone <repository-url>
+cd universal-file-converter
 
-### Manual Installation
+# 4. Install Python dependencies
+pip3 install -r requirements.txt
 
-### 1. Install System Dependencies
-
-#### For Fedora/RHEL/CentOS:
-```bash
-# Install Python tkinter for GUI support
-sudo dnf install python3-tkinter
-
-# Install LibreOffice for better document conversion
-sudo dnf install libreoffice
-
-# Install poppler-utils for better PDF handling (optional)
-sudo dnf install poppler-utils
-
-# Install development tools if needed
-sudo dnf groupinstall "Development Tools"
-sudo dnf install python3-devel
-```
-
-#### For Ubuntu/Debian:
-```bash
-# Install Python tkinter for GUI support
-sudo apt-get update
-sudo apt-get install python3-tk
-
-# Install LibreOffice for better document conversion
-sudo apt-get install libreoffice
-
-# Install poppler-utils for better PDF handling (optional)
-sudo apt-get install poppler-utils
-
-# Install development tools if needed
-sudo apt-get install build-essential python3-dev
-```
-
-#### For Arch Linux:
-```bash
-# Install tkinter for GUI support
-sudo pacman -S tk
-
-# Install LibreOffice for better document conversion
-sudo pacman -S libreoffice-fresh
-
-# Install poppler for better PDF handling (optional)
-sudo pacman -S poppler
-```
-
-### 2. Install Python Dependencies
-
-```bash
-# Navigate to the application directory
-cd /path/to/saeedOS
-
-# Run the installation script
-python3 install.py
-
-# Or install manually
-pip3 install --user -r requirements.txt
-
-# For drag & drop support (optional but recommended)
-pip3 install --user tkinterdnd2
-```
-
-### 3. Test Installation
-
-```bash
-# Run the test suite
-python3 test_converter.py
-
-# Test GUI (if tkinter is installed)
-python3 file_converter_gui.py
-
-# Test CLI
-python3 cli_converter.py --help
-```
-
-## Linux-Specific Features
-
-### Drag & Drop Support
-
-The application includes modern drag & drop functionality:
-- **tkinterdnd2**: Cross-platform drag & drop library
-- **Visual drop zone**: Large, prominent area in main window
-- **File validation**: Automatic format detection on drop
-- **Fallback support**: Works even without drag & drop libraries
-
-```bash
-# Install drag & drop support
-pip3 install --user tkinterdnd2
-```
-
-### DOCX to PDF Conversion Methods
-
-1. **LibreOffice (Recommended)**: Best quality, preserves formatting
-   - Requires: `libreoffice` package
-   - Command: `libreoffice --headless --convert-to pdf`
-
-2. **Fallback Method**: Text extraction + PDF generation
-   - Uses: `python-docx` + `reportlab`
-   - Quality: Basic, loses formatting
-
-### File Permissions
-
-Make scripts executable (optional):
-```bash
-chmod +x cli_converter.py
-chmod +x file_converter_gui.py
-chmod +x test_converter.py
-```
-
-## Usage Examples
-
-### Command Line Interface
-
-```bash
-# Convert single file
-python3 cli_converter.py document.docx -t pdf
-
-# Batch convert all files in a directory
-python3 cli_converter.py -b input_folder output_folder -t pdf
-
-# Convert with verbose output
-python3 cli_converter.py document.pdf -t txt -v
-
-# List supported formats
-python3 cli_converter.py --list-formats
-```
-
-### GUI Application
-
-```bash
-# Launch GUI
+# 5. Run the application
 python3 file_converter_gui.py
 ```
 
-## Troubleshooting
+## 📦 Distribution-Specific Instructions
 
-### Common Issues
+### **Ubuntu 20.04+ / Debian 11+**
 
-1. **"tkinter not found" error**
-   ```bash
-   # Fedora/RHEL/CentOS
-   sudo dnf install python3-tkinter
+#### **Standard Installation**
+```bash
+# Update package list
+sudo apt update
 
-   # Ubuntu/Debian
-   sudo apt-get install python3-tk
-   ```
+# Install Python and development tools
+sudo apt install -y python3 python3-pip python3-venv python3-tk python3-dev
 
-2. **"libreoffice command not found"**
-   ```bash
-   # Fedora/RHEL/CentOS
-   sudo dnf install libreoffice
+# Install multimedia tools
+sudo apt install -y ffmpeg wkhtmltopdf
 
-   # Ubuntu/Debian
-   sudo apt-get install libreoffice
-   ```
+# Install build tools for Python packages
+sudo apt install -y build-essential libffi-dev libssl-dev
 
-3. **Permission denied errors**
-   ```bash
-   # Use --user flag for pip
-   pip3 install --user package_name
+# Clone and setup
+git clone <repository-url>
+cd universal-file-converter
+pip3 install -r requirements.txt
+```
 
-   # Or create virtual environment
-   python3 -m venv converter_env
-   source converter_env/bin/activate
-   pip install -r requirements.txt
-   ```
+#### **If FFmpeg is not available:**
+```bash
+# Enable universe repository
+sudo add-apt-repository universe
+sudo apt update
+sudo apt install ffmpeg
 
-4. **Missing development headers**
-   ```bash
-   # Fedora/RHEL/CentOS
-   sudo dnf install python3-devel
+# Alternative: Install via snap
+sudo snap install ffmpeg
+```
 
-   # Ubuntu/Debian
-   sudo apt-get install python3-dev
-   ```
+### **Fedora 35+ / RHEL 8+ / CentOS 8+**
 
-### Performance Tips
+#### **Standard Installation**
+```bash
+# Install system dependencies
+sudo dnf install -y python3 python3-pip python3-tkinter python3-devel
 
-1. **Use LibreOffice for best DOCX→PDF quality**
-2. **Install poppler-utils for better PDF text extraction**
-3. **Use virtual environments to avoid conflicts**
+# Install multimedia tools
+sudo dnf install -y ffmpeg wkhtmltopdf
 
-## Virtual Environment Setup (Recommended)
+# Install development tools
+sudo dnf groupinstall -y "Development Tools"
+sudo dnf install -y openssl-devel libffi-devel
+
+# Clone and setup
+git clone <repository-url>
+cd universal-file-converter
+pip3 install -r requirements.txt
+```
+
+#### **Enable RPM Fusion for FFmpeg:**
+```bash
+# Enable RPM Fusion repositories
+sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+# Install FFmpeg
+sudo dnf install -y ffmpeg
+```
+
+### **Arch Linux / Manjaro**
+
+```bash
+# Update system
+sudo pacman -Syu
+
+# Install dependencies
+sudo pacman -S python python-pip tk ffmpeg wkhtmltopdf git base-devel
+
+# Clone and setup
+git clone <repository-url>
+cd universal-file-converter
+pip install -r requirements.txt
+```
+
+### **openSUSE Leap / Tumbleweed**
+
+```bash
+# Install dependencies
+sudo zypper install -y python3 python3-pip python3-tk python3-devel
+
+# Install multimedia (may require Packman repository)
+sudo zypper install -y ffmpeg wkhtmltopdf
+
+# Install development tools
+sudo zypper install -y gcc make
+
+# Clone and setup
+git clone <repository-url>
+cd universal-file-converter
+pip3 install -r requirements.txt
+```
+
+### **Alpine Linux**
+
+```bash
+# Install dependencies
+sudo apk add python3 py3-pip python3-dev py3-tkinter
+
+# Install multimedia tools
+sudo apk add ffmpeg wkhtmltopdf
+
+# Install build tools
+sudo apk add gcc musl-dev libffi-dev openssl-dev
+
+# Clone and setup
+git clone <repository-url>
+cd universal-file-converter
+pip3 install -r requirements.txt
+```
+
+## 🔧 Advanced Installation Options
+
+### **Using Virtual Environment (Recommended)**
 
 ```bash
 # Create virtual environment
-python3 -m venv converter_env
+python3 -m venv venv
 
 # Activate virtual environment
-source converter_env/bin/activate
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -232,48 +159,200 @@ python file_converter_gui.py
 deactivate
 ```
 
-## Desktop Integration (Optional)
-
-Create a desktop entry for easy access:
+### **User-Level Installation (No sudo required)**
 
 ```bash
-# Create desktop file
-cat > ~/.local/share/applications/file-converter.desktop << EOF
-[Desktop Entry]
-Name=Universal File Converter
-Comment=Convert between various document formats
-Exec=python3 /path/to/saeedOS/file_converter_gui.py
-Icon=applications-office
-Terminal=false
-Type=Application
-Categories=Office;Utility;
-EOF
+# Install Python packages for user only
+pip3 install --user -r requirements.txt
 
-# Update desktop database
-update-desktop-database ~/.local/share/applications/
+# Add user bin to PATH (add to ~/.bashrc)
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+# Run application
+python3 file_converter_gui.py
 ```
 
-## Supported Conversions on Linux
+### **Docker Installation**
 
-✅ **Fully Supported:**
-- TXT ↔ PDF, DOCX, HTML
-- HTML ↔ TXT, PDF
-- Markdown → HTML, PDF
-- Images ↔ PDF, other formats
-- Excel ↔ CSV
+```bash
+# Create Dockerfile
+cat > Dockerfile << 'EOF'
+FROM ubuntu:22.04
 
-✅ **With LibreOffice:**
-- DOCX ↔ PDF (high quality)
-- RTF ↔ PDF, DOCX
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip python3-tk \
+    ffmpeg wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
-⚠️ **Limited Support:**
-- DOCX ↔ PDF (fallback method, basic quality)
+WORKDIR /app
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
-## Additional Notes
+COPY . .
+CMD ["python3", "file_converter_gui.py"]
+EOF
 
-- The application works best with LibreOffice installed
-- GUI requires X11 or Wayland display server
-- Some conversions may take longer on older hardware
-- Large files (>100MB) may require increased timeout settings
+# Build and run
+docker build -t universal-file-converter .
+docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix universal-file-converter
+```
 
-For more information, see the main README.md file.
+## 🛠️ Troubleshooting Linux Issues
+
+### **GUI Won't Start**
+
+#### **Missing tkinter:**
+```bash
+# Ubuntu/Debian
+sudo apt install python3-tk
+
+# Fedora/RHEL
+sudo dnf install python3-tkinter
+
+# Arch Linux
+sudo pacman -S tk
+```
+
+#### **X11 Display Issues:**
+```bash
+# Check DISPLAY variable
+echo $DISPLAY
+
+# For SSH sessions, use X11 forwarding
+ssh -X username@hostname
+
+# For Wayland, install XWayland
+sudo apt install xwayland  # Ubuntu/Debian
+sudo dnf install xorg-x11-server-Xwayland  # Fedora
+```
+
+### **FFmpeg Issues**
+
+#### **FFmpeg not found:**
+```bash
+# Check if FFmpeg is installed
+which ffmpeg
+ffmpeg -version
+
+# Install from different sources
+sudo apt install ffmpeg  # Ubuntu/Debian
+sudo dnf install ffmpeg  # Fedora (with RPM Fusion)
+sudo pacman -S ffmpeg    # Arch Linux
+sudo snap install ffmpeg # Universal (snap)
+```
+
+#### **FFmpeg permission issues:**
+```bash
+# Check FFmpeg permissions
+ls -la $(which ffmpeg)
+
+# If needed, make executable
+sudo chmod +x $(which ffmpeg)
+```
+
+### **Python Package Issues**
+
+#### **Permission denied errors:**
+```bash
+# Use user installation
+pip3 install --user -r requirements.txt
+
+# Or fix permissions
+sudo chown -R $USER:$USER ~/.local/
+```
+
+#### **Build failures:**
+```bash
+# Install development headers
+sudo apt install python3-dev build-essential  # Ubuntu/Debian
+sudo dnf install python3-devel gcc            # Fedora/RHEL
+sudo pacman -S base-devel                      # Arch Linux
+```
+
+### **Audio/Video Codec Issues**
+
+#### **Missing codecs:**
+```bash
+# Ubuntu/Debian - install restricted extras
+sudo apt install ubuntu-restricted-extras
+
+# Fedora - install multimedia codecs
+sudo dnf install gstreamer1-plugins-{bad-*,good-*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
+
+# Install additional codecs
+sudo apt install libavcodec-extra  # Ubuntu/Debian
+```
+
+## 🚀 Performance Optimization
+
+### **System Optimization**
+```bash
+# Increase file descriptor limits
+echo "* soft nofile 65536" | sudo tee -a /etc/security/limits.conf
+echo "* hard nofile 65536" | sudo tee -a /etc/security/limits.conf
+
+# Optimize for SSD (if applicable)
+sudo systemctl enable fstrim.timer
+```
+
+### **Python Optimization**
+```bash
+# Use faster Python implementation (optional)
+sudo apt install pypy3  # Ubuntu/Debian
+sudo dnf install pypy3  # Fedora
+
+# Run with PyPy (if compatible)
+pypy3 file_converter_gui.py
+```
+
+## 📋 Verification
+
+### **Test Installation**
+```bash
+# Test Python imports
+python3 -c "import tkinter; print('✅ tkinter OK')"
+python3 -c "import PIL; print('✅ Pillow OK')"
+python3 -c "import pandas; print('✅ pandas OK')"
+
+# Test system tools
+ffmpeg -version && echo "✅ FFmpeg OK"
+wkhtmltopdf --version && echo "✅ wkhtmltopdf OK"
+
+# Test GUI (should open window)
+python3 -c "import tkinter; tkinter.Tk().mainloop()"
+
+# Create test files
+python3 create_test_video.py
+```
+
+### **Run Application**
+```bash
+# Start the GUI
+python3 file_converter_gui.py
+
+# If successful, you should see the Universal File Converter window
+```
+
+## 🆘 Getting Help
+
+If you encounter issues:
+
+1. **Check system logs**: `journalctl -xe`
+2. **Verify Python version**: `python3 --version` (3.8+ required)
+3. **Check dependencies**: Run verification commands above
+4. **Review error messages**: Look for specific missing packages
+5. **Search package repositories**: Use your distribution's package search
+6. **Community support**: Check distribution-specific forums
+
+## 📚 Additional Resources
+
+- **Ubuntu Packages**: https://packages.ubuntu.com/
+- **Fedora Packages**: https://packages.fedoraproject.org/
+- **Arch Packages**: https://archlinux.org/packages/
+- **FFmpeg Documentation**: https://ffmpeg.org/documentation.html
+- **Python Virtual Environments**: https://docs.python.org/3/tutorial/venv.html
+
+---
+
+**Note**: This guide covers most common Linux distributions. For other distributions, adapt the package manager commands accordingly (e.g., `zypper` for openSUSE, `emerge` for Gentoo, etc.).

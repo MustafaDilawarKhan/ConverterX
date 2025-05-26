@@ -22,7 +22,27 @@ SUPPORTED_FORMATS = {
     'tiff': ['.tiff', '.tif'],
     'webp': ['.webp'],
     'ico': ['.ico'],
-    'svg': ['.svg']
+    'svg': ['.svg'],
+
+    # Video formats
+    'mp4': ['.mp4'],
+    'avi': ['.avi'],
+    'mov': ['.mov'],
+    'wmv': ['.wmv'],
+    'flv': ['.flv'],
+    'mkv': ['.mkv'],
+    'webm': ['.webm'],
+    'm4v': ['.m4v'],
+    '3gp': ['.3gp'],
+
+    # Audio formats
+    'mp3': ['.mp3'],
+    'wav': ['.wav'],
+    'aac': ['.aac'],
+    'flac': ['.flac'],
+    'ogg': ['.ogg'],
+    'm4a': ['.m4a'],
+    'wma': ['.wma']
 }
 
 # Conversion mappings - what formats can be converted to what
@@ -42,7 +62,27 @@ CONVERSION_MATRIX = {
     'tiff': ['png', 'jpg', 'pdf', 'gif', 'bmp', 'webp'],
     'webp': ['png', 'jpg', 'pdf', 'gif', 'bmp', 'tiff'],
     'ico': ['png', 'jpg', 'pdf', 'gif', 'bmp'],
-    'svg': ['png', 'jpg', 'pdf']
+    'svg': ['png', 'jpg', 'pdf'],
+
+    # Video format conversions
+    'mp4': ['avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    'avi': ['mp4', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    'mov': ['mp4', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'm4v', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    'wmv': ['mp4', 'avi', 'mov', 'flv', 'mkv', 'webm', 'm4v', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    'flv': ['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'm4v', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    'mkv': ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'm4v', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    'webm': ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'm4v', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    'm4v': ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', '3gp', 'mp3', 'wav', 'aac', 'gif'],
+    '3gp': ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v', 'mp3', 'wav', 'aac', 'gif'],
+
+    # Audio format conversions
+    'mp3': ['wav', 'aac', 'flac', 'ogg', 'm4a', 'wma'],
+    'wav': ['mp3', 'aac', 'flac', 'ogg', 'm4a', 'wma'],
+    'aac': ['mp3', 'wav', 'flac', 'ogg', 'm4a', 'wma'],
+    'flac': ['mp3', 'wav', 'aac', 'ogg', 'm4a', 'wma'],
+    'ogg': ['mp3', 'wav', 'aac', 'flac', 'm4a', 'wma'],
+    'm4a': ['mp3', 'wav', 'aac', 'flac', 'ogg', 'wma'],
+    'wma': ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a']
 }
 
 # Default output directory

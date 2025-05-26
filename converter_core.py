@@ -17,6 +17,7 @@ import markdown
 from bs4 import BeautifulSoup
 import pandas as pd
 import utils
+from video_audio_converter import VideoAudioConverter
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class DocumentConverter:
     """Main converter class handling all format conversions"""
 
     def __init__(self):
+        self.video_audio_converter = VideoAudioConverter()
         self.supported_conversions = {
             ('docx', 'pdf'): self._docx_to_pdf,
             ('docx', 'txt'): self._docx_to_txt,
@@ -84,6 +86,9 @@ class DocumentConverter:
             ('svg', 'jpg'): self._svg_to_raster,
             ('svg', 'pdf'): self._svg_to_pdf,
         }
+
+        # Add video and audio conversions dynamically
+        self._add_video_audio_conversions()
 
     def convert(self, input_file: str, output_file: str, source_format: str, target_format: str) -> bool:
         """Main conversion method"""
@@ -642,4 +647,66 @@ class DocumentConverter:
 
         except Exception as e:
             logger.error(f"SVG to PDF conversion failed: {str(e)}")
+            return False
+
+    def _add_video_audio_conversions(self):
+        """Dynamically add video and audio conversion mappings"""
+        # Video formats
+        video_formats = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'm4v', '3gp']
+        audio_formats = ['mp3', 'wav', 'aac', 'flac', 'ogg', 'm4a', 'wma']
+
+        # Video to video conversions
+        for source in video_formats:
+            for target in video_formats:
+                if source != target:
+                    self.supported_conversions[(source, target)] = self._video_to_video
+
+        # Video to audio conversions
+        for source in video_formats:
+            for target in audio_formats:
+                self.supported_conversions[(source, target)] = self._video_to_audio
+
+        # Video to GIF conversions
+        for source in video_formats:
+            self.supported_conversions[(source, 'gif')] = self._video_to_gif
+
+        # Audio to audio conversions
+        for source in audio_formats:
+            for target in audio_formats:
+                if source != target:
+                    self.supported_conversions[(source, target)] = self._audio_to_audio
+
+    def _video_to_video(self, input_file: str, output_file: str) -> bool:
+        """Convert video from one format to another"""
+        try:
+            target_format = os.path.splitext(output_file)[1][1:].lower()
+            return self.video_audio_converter.convert_video_format(input_file, output_file, target_format)
+        except Exception as e:
+            logger.error(f"Video to video conversion failed: {str(e)}")
+            return False
+
+    def _video_to_audio(self, input_file: str, output_file: str) -> bool:
+        """Convert video to audio (extract audio track)"""
+        try:
+            audio_format = os.path.splitext(output_file)[1][1:].lower()
+            return self.video_audio_converter.convert_video_to_audio(input_file, output_file, audio_format)
+        except Exception as e:
+            logger.error(f"Video to audio conversion failed: {str(e)}")
+            return False
+
+    def _video_to_gif(self, input_file: str, output_file: str) -> bool:
+        """Convert video to GIF"""
+        try:
+            return self.video_audio_converter.convert_video_to_gif(input_file, output_file)
+        except Exception as e:
+            logger.error(f"Video to GIF conversion failed: {str(e)}")
+            return False
+
+    def _audio_to_audio(self, input_file: str, output_file: str) -> bool:
+        """Convert audio from one format to another"""
+        try:
+            target_format = os.path.splitext(output_file)[1][1:].lower()
+            return self.video_audio_converter.convert_audio_format(input_file, output_file, target_format)
+        except Exception as e:
+            logger.error(f"Audio to audio conversion failed: {str(e)}")
             return False

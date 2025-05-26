@@ -292,50 +292,73 @@ class FileConverterGUI:
             ("SVG", "Vector Graphics")
         ], 2)
 
+        self.create_category_section(sidebar, "🎬 Video", [
+            ("MP4", "MP4 Videos"),
+            ("AVI", "AVI Videos"),
+            ("MOV", "MOV Videos"),
+            ("WMV", "WMV Videos"),
+            ("FLV", "FLV Videos"),
+            ("MKV", "MKV Videos"),
+            ("WEBM", "WebM Videos"),
+            ("M4V", "M4V Videos"),
+            ("3GP", "3GP Videos")
+        ], 3)
+
+        self.create_category_section(sidebar, "🎵 Audio", [
+            ("MP3", "MP3 Audio"),
+            ("WAV", "WAV Audio"),
+            ("AAC", "AAC Audio"),
+            ("FLAC", "FLAC Audio"),
+            ("OGG", "OGG Audio"),
+            ("M4A", "M4A Audio"),
+            ("WMA", "WMA Audio")
+        ], 4)
+
         self.create_category_section(sidebar, "📊 Spreadsheets", [
             ("XLSX", "Excel Files"),
             ("CSV", "CSV Files")
-        ], 3)
+        ], 5)
 
         # Quick conversion buttons with modern styling
-        ttk.Separator(sidebar, orient='horizontal').grid(row=4, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
+        ttk.Separator(sidebar, orient='horizontal').grid(row=6, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
 
         quick_title = ttk.Label(sidebar, text="⚡ Quick Conversions",
                                font=('Segoe UI', 10, 'bold'),
                                foreground='#212529')
-        quick_title.grid(row=5, column=0, sticky=tk.W, pady=(0, 5))
+        quick_title.grid(row=7, column=0, sticky=tk.W, pady=(0, 5))
 
         # Popular conversion buttons with compact styling
         quick_conversions = [
             ("DOCX → PDF", self.quick_docx_to_pdf),
-            ("PDF → TXT", self.quick_pdf_to_txt),
+            ("Video → MP3", self.quick_video_to_mp3),
+            ("Video → GIF", self.quick_video_to_gif),
             ("PNG → JPG", self.quick_png_to_jpg),
-            ("JPG → PNG", self.quick_jpg_to_png),
             ("Images → PDF", self.quick_images_to_pdf)
         ]
 
         for i, (text, command) in enumerate(quick_conversions):
             btn = ttk.Button(sidebar, text=text, command=command,
                            style="Quick.TButton", width=16)
-            btn.grid(row=6+i, column=0, sticky=(tk.W, tk.E), pady=1)
+            btn.grid(row=8+i, column=0, sticky=(tk.W, tk.E), pady=1)
 
         # Tips section
-        ttk.Separator(sidebar, orient='horizontal').grid(row=11, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
+        ttk.Separator(sidebar, orient='horizontal').grid(row=13, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
 
         tips_title = ttk.Label(sidebar, text="💡 Tips",
                               font=('Segoe UI', 10, 'bold'),
                               foreground='#212529')
-        tips_title.grid(row=12, column=0, sticky=tk.W, pady=(0, 5))
+        tips_title.grid(row=14, column=0, sticky=tk.W, pady=(0, 5))
 
-        tips_text = tk.Text(sidebar, height=4, width=22, wrap=tk.WORD,
+        tips_text = tk.Text(sidebar, height=5, width=22, wrap=tk.WORD,
                            font=('Segoe UI', 8), bg='#f8f9fa', relief='flat',
                            borderwidth=0, highlightthickness=0)
-        tips_text.grid(row=13, column=0, sticky=(tk.W, tk.E), pady=5)
+        tips_text.grid(row=15, column=0, sticky=(tk.W, tk.E), pady=5)
 
-        tips_content = """• Drag & drop files for quick selection
-• PNG preserves transparency
-• JPEG is smaller for photos
-• PDF is great for documents"""
+        tips_content = """• Drag & drop multiple files for batch conversion
+• Video → MP3 extracts audio track
+• Video → GIF creates animated GIFs
+• MP4 is best for video compatibility
+• FLAC is lossless audio quality"""
 
         tips_text.insert('1.0', tips_content)
         tips_text.config(state='disabled')
@@ -489,24 +512,12 @@ class FileConverterGUI:
     def browse_input_file(self):
         """Open file dialog to select input file"""
         filetypes = [
-            ("All Supported", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md;*.xlsx;*.csv;*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.tif;*.webp;*.ico;*.svg"),
-            ("Word Documents", "*.docx"),
-            ("PDF Files", "*.pdf"),
-            ("Text Files", "*.txt"),
-            ("HTML Files", "*.html;*.htm"),
-            ("RTF Files", "*.rtf"),
-            ("Markdown Files", "*.md"),
-            ("Excel Files", "*.xlsx"),
-            ("CSV Files", "*.csv"),
+            ("All Supported", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md;*.xlsx;*.csv;*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.tif;*.webp;*.ico;*.svg;*.mp4;*.avi;*.mov;*.wmv;*.flv;*.mkv;*.webm;*.m4v;*.3gp;*.mp3;*.wav;*.aac;*.flac;*.ogg;*.m4a;*.wma"),
+            ("Document Files", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md"),
             ("Image Files", "*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.tif;*.webp;*.ico;*.svg"),
-            ("PNG Images", "*.png"),
-            ("JPEG Images", "*.jpg;*.jpeg"),
-            ("GIF Images", "*.gif"),
-            ("BMP Images", "*.bmp"),
-            ("TIFF Images", "*.tiff;*.tif"),
-            ("WebP Images", "*.webp"),
-            ("Icon Files", "*.ico"),
-            ("SVG Images", "*.svg"),
+            ("Video Files", "*.mp4;*.avi;*.mov;*.wmv;*.flv;*.mkv;*.webm;*.m4v;*.3gp"),
+            ("Audio Files", "*.mp3;*.wav;*.aac;*.flac;*.ogg;*.m4a;*.wma"),
+            ("Spreadsheet Files", "*.xlsx;*.csv"),
             ("All Files", "*.*")
         ]
 
@@ -528,9 +539,11 @@ class FileConverterGUI:
     def browse_input_files(self):
         """Open file dialog to select multiple input files"""
         filetypes = [
-            ("All Supported", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md;*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.webp;*.ico;*.svg;*.xlsx;*.csv"),
+            ("All Supported", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md;*.xlsx;*.csv;*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.tif;*.webp;*.ico;*.svg;*.mp4;*.avi;*.mov;*.wmv;*.flv;*.mkv;*.webm;*.m4v;*.3gp;*.mp3;*.wav;*.aac;*.flac;*.ogg;*.m4a;*.wma"),
             ("Document Files", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md"),
-            ("Image Files", "*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.webp;*.ico;*.svg"),
+            ("Image Files", "*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.tif;*.webp;*.ico;*.svg"),
+            ("Video Files", "*.mp4;*.avi;*.mov;*.wmv;*.flv;*.mkv;*.webm;*.m4v;*.3gp"),
+            ("Audio Files", "*.mp3;*.wav;*.aac;*.flac;*.ogg;*.m4a;*.wma"),
             ("Spreadsheet Files", "*.xlsx;*.csv"),
             ("All Files", "*.*")
         ]
@@ -852,6 +865,20 @@ class FileConverterGUI:
         """Quick conversion: JPG to PNG"""
         self.set_target_format('png')
         self.log_message("Quick conversion: JPG → PNG selected")
+        if self.input_files_list:
+            self.convert_file()
+
+    def quick_video_to_mp3(self):
+        """Quick conversion: Video to MP3"""
+        self.set_target_format('mp3')
+        self.log_message("Quick conversion: Video → MP3 selected")
+        if self.input_files_list:
+            self.convert_file()
+
+    def quick_video_to_gif(self):
+        """Quick conversion: Video to GIF"""
+        self.set_target_format('gif')
+        self.log_message("Quick conversion: Video → GIF selected")
         if self.input_files_list:
             self.convert_file()
 
