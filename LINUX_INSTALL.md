@@ -1,6 +1,29 @@
-# Linux Installation Guide - Universal File Converter
+# Linux Installation Guide - Universal File Converter v2.0
 
 Complete installation instructions for Linux distributions including Ubuntu, Debian, Fedora, CentOS, RHEL, Arch Linux, and more.
+
+**New in v2.0:** Full video/audio conversion support with FFmpeg integration and enhanced GUI interface.
+
+## 🎬 What's New in v2.0
+
+### ✨ **Video/Audio Conversion (35+ formats)**
+- **Video formats**: MP4, AVI, MOV, WMV, FLV, MKV, WebM, M4V, 3GP
+- **Audio formats**: MP3, WAV, AAC, FLAC, OGG, M4A, WMA
+- **Video → Audio**: Extract audio tracks from any video
+- **Video → GIF**: Create optimized animated GIFs
+- **Audio conversion**: Between all supported audio formats
+
+### 🔧 **Enhanced Linux Support**
+- **FFmpeg integration**: System-level video/audio processing
+- **Dual engine**: MoviePy + FFmpeg fallback for maximum compatibility
+- **Package manager support**: Native installation for all major distributions
+- **X11/Wayland**: Full GUI compatibility across desktop environments
+
+### 🎨 **Improved Interface**
+- **Cleaner sidebar**: Removed quick conversions for simplified workflow
+- **Better organization**: Format buttons grouped by category
+- **Enhanced drag & drop**: Batch file processing with visual feedback
+- **Professional styling**: Modern design with hover effects
 
 ## 🐧 Quick Start (Ubuntu/Debian)
 
@@ -322,8 +345,26 @@ wkhtmltopdf --version && echo "✅ wkhtmltopdf OK"
 # Test GUI (should open window)
 python3 -c "import tkinter; tkinter.Tk().mainloop()"
 
-# Create test files
+# Create test files for video conversion
 python3 create_test_video.py
+
+# Test video conversion capabilities
+python3 quick_video_test.py
+```
+
+### **Test Video Conversion Features**
+```bash
+# Test video to audio extraction
+ffmpeg -i test_video.mp4 -vn -acodec mp3 -ab 192k test_audio.mp3
+
+# Test video to GIF conversion
+ffmpeg -i test_video.mp4 -vf "scale=320:-1:flags=lanczos,fps=10" test_animation.gif
+
+# Test video format conversion
+ffmpeg -i test_video.mp4 -c:v libx264 -c:a aac test_converted.avi
+
+# Verify outputs
+ls -la test_*.{mp3,gif,avi} 2>/dev/null && echo "✅ Video conversion working"
 ```
 
 ### **Run Application**
@@ -352,6 +393,21 @@ If you encounter issues:
 - **Arch Packages**: https://archlinux.org/packages/
 - **FFmpeg Documentation**: https://ffmpeg.org/documentation.html
 - **Python Virtual Environments**: https://docs.python.org/3/tutorial/venv.html
+
+---
+
+## 🎉 **v2.0 Features Ready on Linux**
+
+The Universal File Converter v2.0 now provides **full video/audio conversion capabilities** on Linux with:
+
+- ✅ **35+ format support** including all major video and audio formats
+- ✅ **FFmpeg integration** for professional-grade media processing
+- ✅ **Batch conversion** with drag & drop interface
+- ✅ **Cross-platform compatibility** across all major Linux distributions
+- ✅ **Enhanced GUI** with categorized format selection
+- ✅ **Robust error handling** with detailed diagnostics
+
+**Ready to convert:** Videos, audio files, documents, images, and spreadsheets - all in one application! 🎬🎵📄🖼️📊
 
 ---
 

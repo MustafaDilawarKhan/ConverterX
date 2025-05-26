@@ -21,9 +21,9 @@ A comprehensive, modern file conversion tool with an intuitive GUI interface. Co
 ### ⚡ **Advanced Processing**
 - **Batch Conversion**: Process multiple files simultaneously
 - **Smart Error Handling**: Continue processing even if some files fail
-- **Quick Conversions**: One-click popular format combinations
-- **Cross-Platform**: Works on Windows, macOS, and Linux
 - **Dual Engine**: MoviePy + FFmpeg fallback for video/audio
+- **Cross-Platform**: Works on Windows, macOS, and Linux
+- **Optimized Performance**: Efficient processing with timeout protection
 
 ### 🎯 **Popular Use Cases**
 - **Video → MP3**: Extract audio tracks from videos
@@ -209,7 +209,7 @@ pip install -r requirements.txt
 4. **Convert**: Click "Convert X Files" for batch processing
 5. **Results**: Check log for detailed conversion status
 
-### **Quick Conversions**
+### **Popular Conversions**
 - **Video → MP3**: Extract audio from any video file
 - **Video → GIF**: Create animated GIFs with optimization
 - **DOCX → PDF**: Professional document conversion

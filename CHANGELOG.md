@@ -1,38 +1,89 @@
-# Changelog
+# Changelog - Universal File Converter
 
-All notable changes to the Universal File Converter project will be documented in this file.
+All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2024-01-20
+
+### 🎉 Major Release - Video/Audio Support & Enhanced GUI
+
+#### ✨ Added
+- **Video/Audio Conversion Support (35+ formats)**
+  - Video formats: MP4, AVI, MOV, WMV, FLV, MKV, WebM, M4V, 3GP
+  - Audio formats: MP3, WAV, AAC, FLAC, OGG, M4A, WMA
+  - Video → Audio extraction (any video to any audio format)
+  - Video → GIF conversion with palette optimization
+  - Audio format conversion between all supported types
+
+- **Dual Conversion Engine**
+  - Primary: MoviePy for full-featured video processing
+  - Fallback: System FFmpeg for command-line conversion
+  - Automatic detection and graceful fallback
+  - Robust error handling with detailed diagnostics
+
+- **Enhanced GUI Interface**
+  - Categorized sidebar with format buttons (Documents, Images, Video, Audio, Spreadsheets)
+  - Drag & drop batch file selection with visual feedback
+  - File list management (add, remove, clear files)
+  - Real-time conversion progress tracking
+  - Professional styling with hover effects and modern design
+
+- **Batch Processing Capabilities**
+  - Process multiple files simultaneously
+  - Mixed file type support in single batch
+  - Detailed success/failure reporting
+  - Continue processing even if some files fail
+
+- **Cross-Platform Linux Support**
+  - Comprehensive installation guides for Ubuntu, Debian, Fedora, RHEL, CentOS, Arch Linux
+  - Package manager integration for all major distributions
+  - Virtual environment and Docker support
+  - X11/Wayland compatibility for GUI
+
+#### 🔧 Improved
+- **Error Handling & Logging**
+  - Detailed conversion logs with timestamps
+  - Clear error messages with troubleshooting hints
+  - Graceful handling of missing dependencies
+  - Timeout protection for long conversions
+
+- **Performance Optimization**
+  - Efficient FFmpeg command generation
+  - Optimized GIF creation with palette generation
+  - Smart codec selection based on target format
+  - Memory management for large file processing
+
+- **User Experience**
+  - Intuitive workflow: select format → add files → convert
+  - Visual feedback for all user actions
+  - Comprehensive tips and guidance
+  - Responsive design that adapts to window size
+
+#### 🗑️ Removed
+- **Quick Conversions Section**
+  - Removed quick conversion buttons from sidebar for cleaner interface
+  - Simplified workflow focuses on format selection then file addition
+  - All conversion capabilities still available through format buttons
+
+#### 🐛 Fixed
+- **Directory Creation Issues**
+  - Fixed output directory creation when files are in current directory
+  - Proper handling of relative and absolute paths
+  - Cross-platform path compatibility
+
+- **Video Conversion Failures**
+  - Resolved MoviePy dependency issues with FFmpeg fallback
+  - Fixed codec selection for various video formats
+  - Improved error reporting for failed conversions
+
+- **GUI Stability**
+  - Fixed drag & drop functionality across platforms
+  - Resolved tkinter compatibility issues on Linux
+  - Improved window resizing and layout management
+
 ## [1.2.0] - 2024-12-19
-
-### Added
-- **Drag & Drop Support**
-  - Drop files directly into the main window for instant conversion
-  - Visual drag & drop zone with prominent design
-  - Supported formats display and hover effects
-  - Cross-platform drag & drop using tkinterdnd2
-  - Fallback support for systems without drag & drop
-
-- **Enhanced Main Window Design**
-  - Large, prominent drag & drop zone in main content area
-  - Professional visual styling with modern colors
-  - Hover effects and cursor changes for better UX
-  - Supported formats hint display
-  - Click-to-browse functionality on drop zone
-
-### Enhanced
-- **Improved User Experience**
-  - Moved drag & drop from sidebar to main window for better visibility
-  - Enhanced visual feedback and interaction cues
-  - Better file selection workflow
-  - More intuitive layout and design
-
-### Dependencies
-- Added `tkinterdnd2>=0.3.0` for cross-platform drag & drop support
-
-## [1.1.0] - 2024-12-19
 
 ### Added
 - **Enhanced GUI with Sidebar Navigation**

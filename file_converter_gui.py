@@ -72,17 +72,7 @@ class FileConverterGUI:
                  background=[('active', '#e3f2fd'),
                            ('pressed', '#bbdefb')])
 
-        # Quick conversion button styling
-        style.configure('Quick.TButton',
-                       background='#007bff',
-                       foreground='white',
-                       borderwidth=0,
-                       focuscolor='none',
-                       font=('Segoe UI', 9, 'bold'))
 
-        style.map('Quick.TButton',
-                 background=[('active', '#0056b3'),
-                           ('pressed', '#004085')])
 
         # Drop zone styling
         style.configure('DropZone.TFrame',
@@ -319,40 +309,18 @@ class FileConverterGUI:
             ("CSV", "CSV Files")
         ], 5)
 
-        # Quick conversion buttons with modern styling
-        ttk.Separator(sidebar, orient='horizontal').grid(row=6, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
-
-        quick_title = ttk.Label(sidebar, text="⚡ Quick Conversions",
-                               font=('Segoe UI', 10, 'bold'),
-                               foreground='#212529')
-        quick_title.grid(row=7, column=0, sticky=tk.W, pady=(0, 5))
-
-        # Popular conversion buttons with compact styling
-        quick_conversions = [
-            ("DOCX → PDF", self.quick_docx_to_pdf),
-            ("Video → MP3", self.quick_video_to_mp3),
-            ("Video → GIF", self.quick_video_to_gif),
-            ("PNG → JPG", self.quick_png_to_jpg),
-            ("Images → PDF", self.quick_images_to_pdf)
-        ]
-
-        for i, (text, command) in enumerate(quick_conversions):
-            btn = ttk.Button(sidebar, text=text, command=command,
-                           style="Quick.TButton", width=16)
-            btn.grid(row=8+i, column=0, sticky=(tk.W, tk.E), pady=1)
-
         # Tips section
-        ttk.Separator(sidebar, orient='horizontal').grid(row=13, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
+        ttk.Separator(sidebar, orient='horizontal').grid(row=6, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
 
         tips_title = ttk.Label(sidebar, text="💡 Tips",
                               font=('Segoe UI', 10, 'bold'),
                               foreground='#212529')
-        tips_title.grid(row=14, column=0, sticky=tk.W, pady=(0, 5))
+        tips_title.grid(row=7, column=0, sticky=tk.W, pady=(0, 5))
 
         tips_text = tk.Text(sidebar, height=5, width=22, wrap=tk.WORD,
                            font=('Segoe UI', 8), bg='#f8f9fa', relief='flat',
                            borderwidth=0, highlightthickness=0)
-        tips_text.grid(row=15, column=0, sticky=(tk.W, tk.E), pady=5)
+        tips_text.grid(row=8, column=0, sticky=(tk.W, tk.E), pady=5)
 
         tips_content = """• Drag & drop multiple files for batch conversion
 • Video → MP3 extracts audio track
@@ -840,54 +808,7 @@ class FileConverterGUI:
         self.target_format_var.set(format_code.upper())
         self.log_message(f"Target format set to: {format_code.upper()}")
 
-    def quick_docx_to_pdf(self):
-        """Quick conversion: DOCX to PDF"""
-        self.set_target_format('pdf')
-        self.log_message("Quick conversion: DOCX → PDF selected")
-        if self.input_files_list:
-            self.convert_file()
 
-    def quick_pdf_to_txt(self):
-        """Quick conversion: PDF to TXT"""
-        self.set_target_format('txt')
-        self.log_message("Quick conversion: PDF → TXT selected")
-        if self.input_files_list:
-            self.convert_file()
-
-    def quick_png_to_jpg(self):
-        """Quick conversion: PNG to JPG"""
-        self.set_target_format('jpg')
-        self.log_message("Quick conversion: PNG → JPG selected")
-        if self.input_files_list:
-            self.convert_file()
-
-    def quick_jpg_to_png(self):
-        """Quick conversion: JPG to PNG"""
-        self.set_target_format('png')
-        self.log_message("Quick conversion: JPG → PNG selected")
-        if self.input_files_list:
-            self.convert_file()
-
-    def quick_video_to_mp3(self):
-        """Quick conversion: Video to MP3"""
-        self.set_target_format('mp3')
-        self.log_message("Quick conversion: Video → MP3 selected")
-        if self.input_files_list:
-            self.convert_file()
-
-    def quick_video_to_gif(self):
-        """Quick conversion: Video to GIF"""
-        self.set_target_format('gif')
-        self.log_message("Quick conversion: Video → GIF selected")
-        if self.input_files_list:
-            self.convert_file()
-
-    def quick_images_to_pdf(self):
-        """Quick conversion: Images to PDF"""
-        self.set_target_format('pdf')
-        self.log_message("Quick conversion: Images → PDF selected")
-        if self.input_files_list:
-            self.convert_file()
 
 def main():
     """Main function to run the GUI application"""
