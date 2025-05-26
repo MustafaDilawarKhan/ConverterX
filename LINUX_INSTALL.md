@@ -88,6 +88,9 @@ python3 install.py
 
 # Or install manually
 pip3 install --user -r requirements.txt
+
+# For drag & drop support (optional but recommended)
+pip3 install --user tkinterdnd2
 ```
 
 ### 3. Test Installation
@@ -104,6 +107,19 @@ python3 cli_converter.py --help
 ```
 
 ## Linux-Specific Features
+
+### Drag & Drop Support
+
+The application includes modern drag & drop functionality:
+- **tkinterdnd2**: Cross-platform drag & drop library
+- **Visual drop zone**: Large, prominent area in main window
+- **File validation**: Automatic format detection on drop
+- **Fallback support**: Works even without drag & drop libraries
+
+```bash
+# Install drag & drop support
+pip3 install --user tkinterdnd2
+```
 
 ### DOCX to PDF Conversion Methods
 

@@ -12,3 +12,4 @@ lxml>=4.9.0
 pywin32>=306; sys_platform == "win32"
 cairosvg>=2.5.0
 Wand>=0.6.0
+tkinterdnd2>=0.3.0

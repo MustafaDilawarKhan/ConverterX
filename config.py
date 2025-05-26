@@ -50,7 +50,7 @@ DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), 'converted_files')
 
 # Application settings
 APP_NAME = "Universal File Converter"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.2.0"
 WINDOW_SIZE = "1000x700"
 WINDOW_MIN_SIZE = (800, 500)
 

@@ -7,8 +7,10 @@ A comprehensive Python application for converting between various document and f
 - **Multiple Format Support**: Convert between DOCX, PDF, TXT, HTML, RTF, Markdown, Excel, CSV, and image formats
 - **Bidirectional Conversion**: Convert DOCX ↔ PDF and many other format combinations
 - **Enhanced GUI Interface**: User-friendly graphical interface with organized sidebar navigation
+- **Drag & Drop Support**: Simply drop files into the application for instant conversion
 - **Smart Sidebar**: Categorized format selection (Documents, Images, Spreadsheets)
 - **Quick Conversions**: One-click buttons for popular conversion tasks
+- **Modern Visual Design**: Professional styling with hover effects and visual feedback
 - **Command Line Interface**: Powerful CLI for batch processing and automation
 - **Batch Processing**: Convert multiple files at once
 - **Cross-Platform**: Works on Windows, macOS, and Linux
@@ -88,8 +90,10 @@ python file_converter_gui.py
 
 **Enhanced GUI Features:**
 - **Smart Sidebar Navigation**: Organized by file categories (Documents, Images, Spreadsheets)
+- **Drag & Drop Support**: Drop files directly into the main window for instant conversion
 - **Quick Conversion Buttons**: One-click access to popular conversions
 - **Format Selection**: Click sidebar buttons to instantly set target format
+- **Modern Visual Design**: Professional styling with hover effects and visual feedback
 - **Browse and select input files** with enhanced file type filtering
 - **Automatic format detection** and validation
 - **Real-time conversion progress** with detailed logging

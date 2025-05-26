@@ -5,6 +5,33 @@ All notable changes to the Universal File Converter project will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2024-12-19
+
+### Added
+- **Drag & Drop Support**
+  - Drop files directly into the main window for instant conversion
+  - Visual drag & drop zone with prominent design
+  - Supported formats display and hover effects
+  - Cross-platform drag & drop using tkinterdnd2
+  - Fallback support for systems without drag & drop
+
+- **Enhanced Main Window Design**
+  - Large, prominent drag & drop zone in main content area
+  - Professional visual styling with modern colors
+  - Hover effects and cursor changes for better UX
+  - Supported formats hint display
+  - Click-to-browse functionality on drop zone
+
+### Enhanced
+- **Improved User Experience**
+  - Moved drag & drop from sidebar to main window for better visibility
+  - Enhanced visual feedback and interaction cues
+  - Better file selection workflow
+  - More intuitive layout and design
+
+### Dependencies
+- Added `tkinterdnd2>=0.3.0` for cross-platform drag & drop support
+
 ## [1.1.0] - 2024-12-19
 
 ### Added

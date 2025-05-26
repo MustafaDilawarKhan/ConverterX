@@ -4,6 +4,7 @@ GUI Application for Universal File Converter
 
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
+import tkinter.dnd as dnd
 import threading
 import os
 from pathlib import Path
@@ -13,10 +14,18 @@ from converter_core import DocumentConverter
 
 class FileConverterGUI:
     def __init__(self, root):
-        self.root = root
-        self.root.title(config.APP_NAME)
-        self.root.geometry(config.WINDOW_SIZE)
-        self.root.minsize(*config.WINDOW_MIN_SIZE)
+        # Setup drag and drop first (creates root if needed)
+        self.setup_drag_drop()
+
+        # If root was provided, use it; otherwise use the one created in setup_drag_drop
+        if root is not None:
+            self.root = root
+            self.root.title(config.APP_NAME)
+            self.root.geometry(config.WINDOW_SIZE)
+            self.root.minsize(*config.WINDOW_MIN_SIZE)
+
+        # Configure modern styling
+        self.setup_styles()
 
         self.converter = DocumentConverter()
         self.setup_logging()
@@ -25,6 +34,97 @@ class FileConverterGUI:
     def setup_logging(self):
         """Setup logging for the application"""
         utils.setup_logging()
+
+    def setup_styles(self):
+        """Setup modern styling for the application"""
+        style = ttk.Style()
+
+        # Configure modern theme
+        style.theme_use('clam')
+
+        # Sidebar styling
+        style.configure('Sidebar.TFrame',
+                       background='#f8f9fa',
+                       relief='solid',
+                       borderwidth=1)
+
+        # Category button styling
+        style.configure('Category.TButton',
+                       background='#e9ecef',
+                       foreground='#495057',
+                       borderwidth=1,
+                       focuscolor='none',
+                       font=('Segoe UI', 9))
+
+        style.map('Category.TButton',
+                 background=[('active', '#dee2e6'),
+                           ('pressed', '#ced4da')])
+
+        # Format button styling
+        style.configure('Format.TButton',
+                       background='#ffffff',
+                       foreground='#212529',
+                       borderwidth=1,
+                       focuscolor='none',
+                       font=('Segoe UI', 8, 'bold'))
+
+        style.map('Format.TButton',
+                 background=[('active', '#e3f2fd'),
+                           ('pressed', '#bbdefb')])
+
+        # Quick conversion button styling
+        style.configure('Quick.TButton',
+                       background='#007bff',
+                       foreground='white',
+                       borderwidth=0,
+                       focuscolor='none',
+                       font=('Segoe UI', 9, 'bold'))
+
+        style.map('Quick.TButton',
+                 background=[('active', '#0056b3'),
+                           ('pressed', '#004085')])
+
+        # Drop zone styling
+        style.configure('DropZone.TFrame',
+                       background='#f8f9fa',
+                       relief='dashed',
+                       borderwidth=2)
+
+    def setup_drag_drop(self):
+        """Setup drag and drop functionality"""
+        try:
+            # Try to enable drag and drop using tkinterdnd2 if available
+            import tkinterdnd2
+            # Initialize tkinterdnd2 for the existing root
+            self.root = tkinterdnd2.TkinterDnD.Tk()
+            self.root.title(config.APP_NAME)
+            self.root.geometry(config.WINDOW_SIZE)
+            self.root.minsize(*config.WINDOW_MIN_SIZE)
+
+            self.root.drop_target_register(tkinterdnd2.DND_FILES)
+            self.root.dnd_bind('<<Drop>>', self.on_drop)
+            # Delay the log message until after GUI is created
+            self.root.after(100, lambda: self.log_message("✅ Drag & drop enabled - you can drop files directly into the window!"))
+        except (ImportError, Exception) as e:
+            # Fallback: create regular Tk window
+            self.root = tk.Tk()
+            self.root.title(config.APP_NAME)
+            self.root.geometry(config.WINDOW_SIZE)
+            self.root.minsize(*config.WINDOW_MIN_SIZE)
+            # Delay the log message until after GUI is created
+            self.root.after(100, lambda: self.log_message("ℹ️ Drag & drop not available - use Browse button to select files"))
+
+    def on_drop(self, event):
+        """Handle dropped files"""
+        try:
+            files = event.data.split()
+            if files:
+                # Take the first file
+                file_path = files[0].strip('{}')  # Remove braces if present
+                self.input_file_var.set(file_path)
+                self.log_message(f"File dropped: {os.path.basename(file_path)}")
+        except Exception as e:
+            self.log_message(f"Error handling dropped file: {str(e)}")
 
     def create_widgets(self):
         """Create and arrange GUI widgets"""
@@ -48,16 +148,14 @@ class FileConverterGUI:
 
         # Title
         title_label = ttk.Label(main_frame, text=config.APP_NAME,
-                               font=('Arial', 16, 'bold'))
-        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+                               font=('Segoe UI', 16, 'bold'))
+        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 15))
 
-        # Input file selection
-        ttk.Label(main_frame, text="Input File:").grid(row=1, column=0, sticky=tk.W, pady=5)
+        # Add drag & drop zone in main area
+        self.create_main_drop_zone(main_frame, 1)
+
+        # Initialize input file variable (no UI display needed)
         self.input_file_var = tk.StringVar()
-        self.input_entry = ttk.Entry(main_frame, textvariable=self.input_file_var, width=50)
-        self.input_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), padx=(5, 5), pady=5)
-        ttk.Button(main_frame, text="Browse",
-                  command=self.browse_input_file).grid(row=1, column=2, pady=5)
 
         # Source format (auto-detected)
         ttk.Label(main_frame, text="Source Format:").grid(row=2, column=0, sticky=tk.W, pady=5)
@@ -83,7 +181,7 @@ class FileConverterGUI:
 
         # Convert button
         self.convert_button = ttk.Button(main_frame, text="Convert File",
-                                        command=self.convert_file, style="Accent.TButton")
+                                        command=self.convert_file, style="Quick.TButton")
         self.convert_button.grid(row=5, column=0, columnspan=3, pady=20)
 
         # Progress bar
@@ -109,18 +207,46 @@ class FileConverterGUI:
         self.input_file_var.trace('w', self.on_input_file_change)
 
     def create_sidebar(self, parent):
-        """Create sidebar with conversion categories"""
-        # Sidebar frame with background
-        sidebar = ttk.Frame(parent, padding="10", relief="raised", borderwidth=1)
+        """Create modern sidebar with conversion categories"""
+        # Create scrollable sidebar
+        sidebar_canvas = tk.Canvas(parent, width=200, bg='#f8f9fa', highlightthickness=0)
+        sidebar_scrollbar = ttk.Scrollbar(parent, orient="vertical", command=sidebar_canvas.yview)
+        sidebar_frame = ttk.Frame(sidebar_canvas, style="Sidebar.TFrame")
+
+        # Configure scrolling
+        sidebar_frame.bind(
+            "<Configure>",
+            lambda e: sidebar_canvas.configure(scrollregion=sidebar_canvas.bbox("all"))
+        )
+
+        sidebar_canvas.create_window((0, 0), window=sidebar_frame, anchor="nw")
+        sidebar_canvas.configure(yscrollcommand=sidebar_scrollbar.set)
+
+        # Grid the canvas and scrollbar
+        sidebar_canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        sidebar_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+
+        # Configure the actual sidebar content
+        sidebar = ttk.Frame(sidebar_frame, padding="10")
         sidebar.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        sidebar.configure(style="Sidebar.TFrame")
+        sidebar.columnconfigure(0, weight=1)
 
-        # Sidebar title
-        sidebar_title = ttk.Label(sidebar, text="Conversion Categories",
-                                 font=('Arial', 12, 'bold'))
-        sidebar_title.grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
+        # Sidebar title with modern styling
+        title_frame = ttk.Frame(sidebar)
+        title_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 20))
+        title_frame.columnconfigure(0, weight=1)
 
-        # Category sections
+        sidebar_title = ttk.Label(title_frame, text="🔄 File Converter",
+                                 font=('Segoe UI', 14, 'bold'),
+                                 foreground='#212529')
+        sidebar_title.grid(row=0, column=0, sticky=tk.W)
+
+        subtitle = ttk.Label(title_frame, text="Choose your conversion type",
+                            font=('Segoe UI', 9),
+                            foreground='#6c757d')
+        subtitle.grid(row=1, column=0, sticky=tk.W, pady=(2, 0))
+
+        # Category sections with compact styling
         self.create_category_section(sidebar, "📄 Documents", [
             ("DOCX", "Word Documents"),
             ("PDF", "PDF Files"),
@@ -146,14 +272,15 @@ class FileConverterGUI:
             ("CSV", "CSV Files")
         ], 3)
 
-        # Quick conversion buttons
-        ttk.Separator(sidebar, orient='horizontal').grid(row=4, column=0, sticky=(tk.W, tk.E), pady=15)
+        # Quick conversion buttons with modern styling
+        ttk.Separator(sidebar, orient='horizontal').grid(row=4, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
 
-        quick_title = ttk.Label(sidebar, text="Quick Conversions",
-                               font=('Arial', 11, 'bold'))
-        quick_title.grid(row=5, column=0, sticky=tk.W, pady=(0, 10))
+        quick_title = ttk.Label(sidebar, text="⚡ Quick Conversions",
+                               font=('Segoe UI', 10, 'bold'),
+                               foreground='#212529')
+        quick_title.grid(row=5, column=0, sticky=tk.W, pady=(0, 5))
 
-        # Popular conversion buttons
+        # Popular conversion buttons with compact styling
         quick_conversions = [
             ("DOCX → PDF", self.quick_docx_to_pdf),
             ("PDF → TXT", self.quick_pdf_to_txt),
@@ -163,49 +290,139 @@ class FileConverterGUI:
         ]
 
         for i, (text, command) in enumerate(quick_conversions):
-            btn = ttk.Button(sidebar, text=text, command=command, width=15)
-            btn.grid(row=6+i, column=0, sticky=(tk.W, tk.E), pady=2)
+            btn = ttk.Button(sidebar, text=text, command=command,
+                           style="Quick.TButton", width=16)
+            btn.grid(row=6+i, column=0, sticky=(tk.W, tk.E), pady=1)
 
         # Tips section
-        ttk.Separator(sidebar, orient='horizontal').grid(row=12, column=0, sticky=(tk.W, tk.E), pady=15)
+        ttk.Separator(sidebar, orient='horizontal').grid(row=11, column=0, sticky=(tk.W, tk.E), pady=(10, 5))
 
         tips_title = ttk.Label(sidebar, text="💡 Tips",
-                              font=('Arial', 11, 'bold'))
-        tips_title.grid(row=13, column=0, sticky=tk.W, pady=(0, 5))
+                              font=('Segoe UI', 10, 'bold'),
+                              foreground='#212529')
+        tips_title.grid(row=12, column=0, sticky=tk.W, pady=(0, 5))
 
-        tips_text = tk.Text(sidebar, height=6, width=25, wrap=tk.WORD,
-                           font=('Arial', 9), bg='#f0f0f0', relief='flat')
-        tips_text.grid(row=14, column=0, sticky=(tk.W, tk.E), pady=5)
+        tips_text = tk.Text(sidebar, height=4, width=22, wrap=tk.WORD,
+                           font=('Segoe UI', 8), bg='#f8f9fa', relief='flat',
+                           borderwidth=0, highlightthickness=0)
+        tips_text.grid(row=13, column=0, sticky=(tk.W, tk.E), pady=5)
 
         tips_content = """• Drag & drop files for quick selection
-• Use batch mode for multiple files
 • PNG preserves transparency
 • JPEG is smaller for photos
-• PDF is great for documents
-• SVG is vector graphics"""
+• PDF is great for documents"""
 
         tips_text.insert('1.0', tips_content)
         tips_text.config(state='disabled')
 
+    def create_main_drop_zone(self, parent, row):
+        """Create main drag & drop zone in the content area"""
+        drop_frame = ttk.Frame(parent, style="DropZone.TFrame", padding="20")
+        drop_frame.grid(row=row, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20))
+        drop_frame.columnconfigure(0, weight=1)
+
+        # Drop zone content with larger, more prominent design
+        drop_icon = ttk.Label(drop_frame, text="📁", font=('Segoe UI', 32))
+        drop_icon.grid(row=0, column=0, pady=(10, 5))
+
+        drop_title = ttk.Label(drop_frame, text="Drag & Drop Files Here",
+                              font=('Segoe UI', 14, 'bold'),
+                              foreground='#495057')
+        drop_title.grid(row=1, column=0, pady=(0, 5))
+
+        drop_subtitle = ttk.Label(drop_frame, text="or use the Browse button below",
+                                 font=('Segoe UI', 10),
+                                 foreground='#6c757d')
+        drop_subtitle.grid(row=2, column=0, pady=(0, 10))
+
+        # Supported formats hint
+        formats_hint = ttk.Label(drop_frame,
+                               text="Supports: DOCX, PDF, TXT, HTML, PNG, JPG, GIF, BMP, TIFF, WebP, ICO, SVG, XLSX, CSV",
+                               font=('Segoe UI', 8),
+                               foreground='#adb5bd')
+        formats_hint.grid(row=3, column=0, pady=(0, 10))
+
+        # Bind drag and drop events to the entire drop zone
+        self.setup_drop_zone_events(drop_frame)
+        self.setup_drop_zone_events(drop_icon)
+        self.setup_drop_zone_events(drop_title)
+        self.setup_drop_zone_events(drop_subtitle)
+        self.setup_drop_zone_events(formats_hint)
+
+        # Enable drag and drop on the drop zone
+        try:
+            import tkinterdnd2
+            # Only register if tkinterdnd2 was properly initialized
+            if hasattr(self.root, 'tk') and hasattr(self.root.tk, 'call'):
+                drop_frame.drop_target_register(tkinterdnd2.DND_FILES)
+                drop_frame.dnd_bind('<<Drop>>', self.on_drop)
+        except (ImportError, Exception):
+            pass
+
+    def setup_drop_zone_events(self, widget):
+        """Setup events for drop zone widgets"""
+        widget.bind('<Button-1>', lambda e: self.browse_input_file())
+        widget.bind('<Enter>', self.on_drop_zone_enter)
+        widget.bind('<Leave>', self.on_drop_zone_leave)
+
+    def on_drop_zone_enter(self, event):
+        """Handle mouse enter on drop zone"""
+        event.widget.configure(cursor='hand2')
+
+    def on_drop_zone_leave(self, event):
+        """Handle mouse leave on drop zone"""
+        event.widget.configure(cursor='')
+
+    def create_drop_zone(self, parent, row):
+        """Create drag & drop zone"""
+        drop_frame = ttk.Frame(parent, style="DropZone.TFrame", padding="10")
+        drop_frame.grid(row=row, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
+        drop_frame.columnconfigure(0, weight=1)
+
+        # Drop zone icon and text
+        drop_icon = ttk.Label(drop_frame, text="📁", font=('Segoe UI', 24))
+        drop_icon.grid(row=0, column=0, pady=(5, 0))
+
+        drop_title = ttk.Label(drop_frame, text="Drag & Drop Files Here",
+                              font=('Segoe UI', 10, 'bold'),
+                              foreground='#6c757d')
+        drop_title.grid(row=1, column=0, pady=(0, 2))
+
+        drop_subtitle = ttk.Label(drop_frame, text="or click Browse below",
+                                 font=('Segoe UI', 8),
+                                 foreground='#adb5bd')
+        drop_subtitle.grid(row=2, column=0, pady=(0, 5))
+
+        # Bind drag and drop events
+        drop_frame.bind('<Button-1>', lambda e: self.browse_input_file())
+        drop_icon.bind('<Button-1>', lambda e: self.browse_input_file())
+        drop_title.bind('<Button-1>', lambda e: self.browse_input_file())
+        drop_subtitle.bind('<Button-1>', lambda e: self.browse_input_file())
+
     def create_category_section(self, parent, title, formats, row):
-        """Create a category section in the sidebar"""
-        # Category title
-        category_label = ttk.Label(parent, text=title, font=('Arial', 10, 'bold'))
-        category_label.grid(row=row, column=0, sticky=tk.W, pady=(10, 5))
+        """Create a compact category section in the sidebar"""
+        # Category title with compact styling
+        category_label = ttk.Label(parent, text=title,
+                                  font=('Segoe UI', 9, 'bold'),
+                                  foreground='#495057')
+        category_label.grid(row=row, column=0, sticky=tk.W, pady=(8, 3))
 
-        # Format list
+        # Format grid with compact buttons
         formats_frame = ttk.Frame(parent)
-        formats_frame.grid(row=row, column=0, sticky=(tk.W, tk.E), padx=(15, 0), pady=(25, 0))
+        formats_frame.grid(row=row, column=0, sticky=(tk.W, tk.E), padx=(0, 0), pady=(20, 5))
+        formats_frame.columnconfigure(0, weight=1)
+        formats_frame.columnconfigure(1, weight=1)
 
-        for i, (format_code, format_name) in enumerate(formats):
+        for i, (format_code, _) in enumerate(formats):
             format_btn = ttk.Button(formats_frame, text=f"{format_code}",
                                    command=lambda f=format_code.lower(): self.set_target_format(f),
+                                   style="Format.TButton",
                                    width=8)
-            format_btn.grid(row=i//2, column=i%2, sticky=tk.W, padx=2, pady=1)
+            format_btn.grid(row=i//2, column=i%2, sticky=(tk.W, tk.E), padx=1, pady=1)
 
-            # Tooltip-like label
-            if i % 2 == 1 or i == len(formats) - 1:
-                ttk.Label(formats_frame, text="", font=('Arial', 1)).grid(row=i//2, column=2)
+            # Add hover effect
+            format_btn.bind('<Enter>', lambda e, btn=format_btn: btn.configure(style="Format.TButton"))
+            format_btn.bind('<Leave>', lambda e, btn=format_btn: btn.configure(style="Format.TButton"))
 
     def browse_input_file(self):
         """Open file dialog to select input file"""
@@ -238,6 +455,7 @@ class FileConverterGUI:
 
         if filename:
             self.input_file_var.set(filename)
+            self.log_message(f"File selected: {os.path.basename(filename)}")
 
     def browse_output_dir(self):
         """Open directory dialog to select output directory"""
@@ -421,9 +639,8 @@ class FileConverterGUI:
 
 def main():
     """Main function to run the GUI application"""
-    root = tk.Tk()
-    app = FileConverterGUI(root)
-    root.mainloop()
+    app = FileConverterGUI(None)
+    app.root.mainloop()
 
 if __name__ == "__main__":
     main()
