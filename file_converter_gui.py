@@ -115,16 +115,40 @@ class FileConverterGUI:
             self.root.after(100, lambda: self.log_message("ℹ️ Drag & drop not available - use Browse button to select files"))
 
     def on_drop(self, event):
-        """Handle dropped files"""
+        """Handle dropped files (batch support)"""
         try:
-            files = event.data.split()
+            # Parse dropped files
+            files = []
+            if hasattr(event, 'data'):
+                # Handle different formats of file paths
+                raw_data = event.data
+                if raw_data.startswith('{') and raw_data.endswith('}'):
+                    # Single file in braces
+                    files = [raw_data.strip('{}')]
+                else:
+                    # Multiple files - split by spaces but handle paths with spaces
+                    import re
+                    files = re.findall(r'\{[^}]*\}|[^\s]+', raw_data)
+                    files = [f.strip('{}') for f in files]
+
             if files:
-                # Take the first file
-                file_path = files[0].strip('{}')  # Remove braces if present
-                self.input_file_var.set(file_path)
-                self.log_message(f"File dropped: {os.path.basename(file_path)}")
+                added_count = 0
+                for file_path in files:
+                    if file_path and os.path.isfile(file_path):
+                        # Check if file is already in the list
+                        if file_path not in self.input_files_list:
+                            self.input_files_list.append(file_path)
+                            self.files_listbox.insert(tk.END, os.path.basename(file_path))
+                            added_count += 1
+
+                if added_count > 0:
+                    self.log_message(f"✅ {added_count} file(s) added to batch conversion list")
+                    self.update_file_info()
+                else:
+                    self.log_message("ℹ️ No new files added (duplicates or invalid files)")
+
         except Exception as e:
-            self.log_message(f"Error handling dropped file: {str(e)}")
+            self.log_message(f"❌ Error handling dropped files: {str(e)}")
 
     def create_widgets(self):
         """Create and arrange GUI widgets"""
@@ -154,8 +178,9 @@ class FileConverterGUI:
         # Add drag & drop zone in main area
         self.create_main_drop_zone(main_frame, 1)
 
-        # Initialize input file variable (no UI display needed)
+        # Initialize file variables for batch processing
         self.input_file_var = tk.StringVar()
+        self.input_files_list = []  # List to store multiple files for batch processing
 
         # Source format (auto-detected)
         ttk.Label(main_frame, text="Source Format:").grid(row=2, column=0, sticky=tk.W, pady=5)
@@ -316,38 +341,75 @@ class FileConverterGUI:
         tips_text.config(state='disabled')
 
     def create_main_drop_zone(self, parent, row):
-        """Create main drag & drop zone in the content area"""
-        drop_frame = ttk.Frame(parent, style="DropZone.TFrame", padding="20")
-        drop_frame.grid(row=row, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20))
+        """Create main drag & drop zone with file list view"""
+        # Main container for drop zone and file list
+        drop_container = ttk.Frame(parent)
+        drop_container.grid(row=row, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20))
+        drop_container.columnconfigure(0, weight=1)
+        drop_container.columnconfigure(1, weight=1)
+
+        # Left side: Drop zone
+        drop_frame = ttk.Frame(drop_container, style="DropZone.TFrame", padding="15")
+        drop_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 10))
         drop_frame.columnconfigure(0, weight=1)
 
-        # Drop zone content with larger, more prominent design
-        drop_icon = ttk.Label(drop_frame, text="📁", font=('Segoe UI', 32))
-        drop_icon.grid(row=0, column=0, pady=(10, 5))
+        # Drop zone content
+        drop_icon = ttk.Label(drop_frame, text="📁", font=('Segoe UI', 24))
+        drop_icon.grid(row=0, column=0, pady=(5, 3))
 
         drop_title = ttk.Label(drop_frame, text="Drag & Drop Files Here",
-                              font=('Segoe UI', 14, 'bold'),
+                              font=('Segoe UI', 12, 'bold'),
                               foreground='#495057')
-        drop_title.grid(row=1, column=0, pady=(0, 5))
+        drop_title.grid(row=1, column=0, pady=(0, 3))
 
-        drop_subtitle = ttk.Label(drop_frame, text="or use the Browse button below",
-                                 font=('Segoe UI', 10),
+        drop_subtitle = ttk.Label(drop_frame, text="Single or multiple files",
+                                 font=('Segoe UI', 9),
                                  foreground='#6c757d')
-        drop_subtitle.grid(row=2, column=0, pady=(0, 10))
+        drop_subtitle.grid(row=2, column=0, pady=(0, 5))
 
-        # Supported formats hint
-        formats_hint = ttk.Label(drop_frame,
-                               text="Supports: DOCX, PDF, TXT, HTML, PNG, JPG, GIF, BMP, TIFF, WebP, ICO, SVG, XLSX, CSV",
-                               font=('Segoe UI', 8),
-                               foreground='#adb5bd')
-        formats_hint.grid(row=3, column=0, pady=(0, 10))
+        # Browse button
+        browse_btn = ttk.Button(drop_frame, text="Browse Files",
+                               command=self.browse_input_files,
+                               style="Format.TButton")
+        browse_btn.grid(row=3, column=0, pady=(5, 5))
 
-        # Bind drag and drop events to the entire drop zone
+        # Right side: File list
+        files_frame = ttk.LabelFrame(drop_container, text="📋 Selected Files", padding="10")
+        files_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(10, 0))
+        files_frame.columnconfigure(0, weight=1)
+        files_frame.rowconfigure(0, weight=1)
+
+        # File list with scrollbar
+        list_frame = ttk.Frame(files_frame)
+        list_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        list_frame.columnconfigure(0, weight=1)
+        list_frame.rowconfigure(0, weight=1)
+
+        self.files_listbox = tk.Listbox(list_frame, height=6, font=('Segoe UI', 9))
+        files_scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.files_listbox.yview)
+        self.files_listbox.configure(yscrollcommand=files_scrollbar.set)
+
+        self.files_listbox.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        files_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+
+        # File list controls
+        controls_frame = ttk.Frame(files_frame)
+        controls_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(10, 0))
+        controls_frame.columnconfigure(0, weight=1)
+
+        ttk.Button(controls_frame, text="Remove Selected",
+                  command=self.remove_selected_file,
+                  style="Format.TButton").grid(row=0, column=0, sticky=tk.W)
+
+        ttk.Button(controls_frame, text="Clear All",
+                  command=self.clear_all_files,
+                  style="Format.TButton").grid(row=0, column=1, sticky=tk.E)
+
+        # Bind drag and drop events
         self.setup_drop_zone_events(drop_frame)
         self.setup_drop_zone_events(drop_icon)
         self.setup_drop_zone_events(drop_title)
         self.setup_drop_zone_events(drop_subtitle)
-        self.setup_drop_zone_events(formats_hint)
 
         # Enable drag and drop on the drop zone
         try:
@@ -454,8 +516,82 @@ class FileConverterGUI:
         )
 
         if filename:
-            self.input_file_var.set(filename)
-            self.log_message(f"File selected: {os.path.basename(filename)}")
+            # Add to batch list instead of single file
+            if filename not in self.input_files_list:
+                self.input_files_list.append(filename)
+                self.files_listbox.insert(tk.END, os.path.basename(filename))
+                self.log_message(f"File added: {os.path.basename(filename)}")
+                self.update_file_info()
+            else:
+                self.log_message(f"File already in list: {os.path.basename(filename)}")
+
+    def browse_input_files(self):
+        """Open file dialog to select multiple input files"""
+        filetypes = [
+            ("All Supported", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md;*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.webp;*.ico;*.svg;*.xlsx;*.csv"),
+            ("Document Files", "*.docx;*.pdf;*.txt;*.html;*.rtf;*.md"),
+            ("Image Files", "*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.tiff;*.webp;*.ico;*.svg"),
+            ("Spreadsheet Files", "*.xlsx;*.csv"),
+            ("All Files", "*.*")
+        ]
+
+        filenames = filedialog.askopenfilenames(
+            title="Select Files to Convert",
+            filetypes=filetypes
+        )
+
+        if filenames:
+            added_count = 0
+            for filename in filenames:
+                if filename not in self.input_files_list:
+                    self.input_files_list.append(filename)
+                    self.files_listbox.insert(tk.END, os.path.basename(filename))
+                    added_count += 1
+
+            if added_count > 0:
+                self.log_message(f"✅ {added_count} file(s) added to batch conversion list")
+                self.update_file_info()
+            else:
+                self.log_message("ℹ️ No new files added (all files already in list)")
+
+    def remove_selected_file(self):
+        """Remove selected file from the list"""
+        selection = self.files_listbox.curselection()
+        if selection:
+            index = selection[0]
+            filename = os.path.basename(self.input_files_list[index])
+            del self.input_files_list[index]
+            self.files_listbox.delete(index)
+            self.log_message(f"Removed: {filename}")
+            self.update_file_info()
+        else:
+            self.log_message("ℹ️ Please select a file to remove")
+
+    def clear_all_files(self):
+        """Clear all files from the list"""
+        if self.input_files_list:
+            count = len(self.input_files_list)
+            self.input_files_list.clear()
+            self.files_listbox.delete(0, tk.END)
+            self.log_message(f"✅ Cleared {count} file(s) from list")
+            self.update_file_info()
+        else:
+            self.log_message("ℹ️ No files to clear")
+
+    def update_file_info(self):
+        """Update file information display"""
+        if self.input_files_list:
+            # Set the first file for format detection
+            self.input_file_var.set(self.input_files_list[0])
+            # Update convert button text
+            count = len(self.input_files_list)
+            if count == 1:
+                self.convert_button.config(text="Convert File")
+            else:
+                self.convert_button.config(text=f"Convert {count} Files")
+        else:
+            self.input_file_var.set("")
+            self.convert_button.config(text="Convert File")
 
     def browse_output_dir(self):
         """Open directory dialog to select output directory"""
@@ -501,23 +637,16 @@ class FileConverterGUI:
             self.convert_button['state'] = 'disabled'
 
     def convert_file(self):
-        """Convert the selected file"""
-        input_file = self.input_file_var.get()
+        """Convert the selected file(s) - supports batch conversion"""
         target_format = self.target_format_var.get().lower()
         output_dir = self.output_dir_var.get()
 
-        if not input_file or not os.path.exists(input_file):
-            messagebox.showerror("Error", "Please select a valid input file")
+        if not self.input_files_list:
+            messagebox.showerror("Error", "Please select input file(s) using drag & drop or browse")
             return
 
         if not target_format:
             messagebox.showerror("Error", "Please select a target format")
-            return
-
-        # Validate input file
-        is_valid, message = utils.validate_file(input_file)
-        if not is_valid:
-            messagebox.showerror("Error", f"Invalid input file: {message}")
             return
 
         # Create output directory
@@ -527,11 +656,107 @@ class FileConverterGUI:
             messagebox.showerror("Error", f"Could not create output directory: {str(e)}")
             return
 
-        # Generate output filename
-        output_file = utils.generate_output_filename(input_file, target_format, output_dir)
+        # Start batch conversion
+        self.start_batch_conversion(self.input_files_list, target_format, output_dir)
 
-        # Start conversion in a separate thread
-        self.start_conversion_thread(input_file, output_file, target_format)
+    def start_batch_conversion(self, input_files, target_format, output_dir):
+        """Start batch conversion in a separate thread"""
+        self.convert_button['state'] = 'disabled'
+        self.progress_bar.start()
+
+        file_count = len(input_files)
+        if file_count == 1:
+            self.status_var.set("Converting file...")
+        else:
+            self.status_var.set(f"Converting {file_count} files...")
+
+        def batch_conversion_worker():
+            try:
+                results = []
+                successful = 0
+                failed = 0
+
+                for i, input_file in enumerate(input_files):
+                    try:
+                        # Update status
+                        filename = os.path.basename(input_file)
+                        self.root.after(0, lambda f=filename, idx=i+1, total=file_count:
+                                      self.status_var.set(f"Converting {idx}/{total}: {f}"))
+
+                        # Validate input file
+                        is_valid, message = utils.validate_file(input_file)
+                        if not is_valid:
+                            raise Exception(f"Invalid file: {message}")
+
+                        # Generate output filename
+                        output_file = utils.generate_output_filename(input_file, target_format, output_dir)
+                        source_format = utils.get_file_format(input_file)
+
+                        # Log conversion start
+                        self.root.after(0, lambda f=filename, sf=source_format, tf=target_format:
+                                      self.log_message(f"Converting {f}: {sf.upper()} → {tf.upper()}"))
+
+                        # Convert file
+                        success = self.converter.convert(input_file, output_file, source_format, target_format)
+
+                        if success:
+                            results.append((input_file, output_file, None))
+                            successful += 1
+                            # Log success
+                            self.root.after(0, lambda f=filename:
+                                          self.log_message(f"✅ Converted: {f}"))
+                        else:
+                            raise Exception("Conversion failed")
+
+                    except Exception as e:
+                        results.append((input_file, None, str(e)))
+                        failed += 1
+                        # Log error
+                        filename = os.path.basename(input_file)
+                        self.root.after(0, lambda f=filename, err=str(e):
+                                      self.log_message(f"❌ Failed: {f} - {err}"))
+
+                # Update UI in main thread
+                self.root.after(0, lambda: self.batch_conversion_complete(results, successful, failed))
+
+            except Exception as e:
+                error_msg = f"Batch conversion failed: {str(e)}"
+                self.root.after(0, lambda: self.conversion_error(error_msg))
+
+        thread = threading.Thread(target=batch_conversion_worker)
+        thread.daemon = True
+        thread.start()
+
+    def batch_conversion_complete(self, results, successful, failed):
+        """Handle batch conversion completion"""
+        self.progress_bar.stop()
+        self.convert_button['state'] = 'normal'
+
+        total = successful + failed
+
+        if successful == total:
+            self.status_var.set(f"All {total} files converted successfully!")
+            self.log_message(f"🎉 Batch conversion complete: {successful}/{total} files converted")
+
+            # Show success message with option to open output folder
+            if messagebox.askyesno("Batch Conversion Complete",
+                                 f"Successfully converted {successful} file(s)!\n\nWould you like to open the output folder?"):
+                try:
+                    output_dir = self.output_dir_var.get()
+                    os.startfile(output_dir)  # Windows
+                except:
+                    try:
+                        os.system(f'open "{output_dir}"')  # macOS
+                    except:
+                        os.system(f'xdg-open "{output_dir}"')  # Linux
+        else:
+            self.status_var.set(f"Batch conversion completed with errors: {successful}/{total} successful")
+            self.log_message(f"⚠️ Batch conversion finished: {successful} successful, {failed} failed")
+            messagebox.showwarning("Batch Conversion Complete",
+                                 f"Conversion completed with some errors:\n\n"
+                                 f"Successful: {successful}\n"
+                                 f"Failed: {failed}\n\n"
+                                 f"Check the log for details.")
 
     def start_conversion_thread(self, input_file, output_file, target_format):
         """Start conversion in a separate thread to prevent GUI freezing"""
@@ -606,35 +831,35 @@ class FileConverterGUI:
         """Quick conversion: DOCX to PDF"""
         self.set_target_format('pdf')
         self.log_message("Quick conversion: DOCX → PDF selected")
-        if self.input_file_var.get():
+        if self.input_files_list:
             self.convert_file()
 
     def quick_pdf_to_txt(self):
         """Quick conversion: PDF to TXT"""
         self.set_target_format('txt')
         self.log_message("Quick conversion: PDF → TXT selected")
-        if self.input_file_var.get():
+        if self.input_files_list:
             self.convert_file()
 
     def quick_png_to_jpg(self):
         """Quick conversion: PNG to JPG"""
         self.set_target_format('jpg')
         self.log_message("Quick conversion: PNG → JPG selected")
-        if self.input_file_var.get():
+        if self.input_files_list:
             self.convert_file()
 
     def quick_jpg_to_png(self):
         """Quick conversion: JPG to PNG"""
         self.set_target_format('png')
         self.log_message("Quick conversion: JPG → PNG selected")
-        if self.input_file_var.get():
+        if self.input_files_list:
             self.convert_file()
 
     def quick_images_to_pdf(self):
         """Quick conversion: Images to PDF"""
         self.set_target_format('pdf')
         self.log_message("Quick conversion: Images → PDF selected")
-        if self.input_file_var.get():
+        if self.input_files_list:
             self.convert_file()
 
 def main():
